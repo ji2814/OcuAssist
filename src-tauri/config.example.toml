@@ -1,0 +1,4 @@
+[api]
+endpoint = "https://api.openai.com/v1/chat/completions"
+key = "sk-xxx"
+model = "chatgpt-3.5-turbo"

@@ -1,0 +1,65 @@
+/* App.css */
+.app-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0px;
+    height: 100vh;
+    background: #1a1a1a;
+    color: white;
+  }
+  
+  .left-panel {
+    height: 100%;
+  }
+  
+  .right-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 10px;
+    padding: 20px;
+  }
+  
+  .right-panel > .bg-black { /* PatientInfo */
+    flex: 1;
+    min-height: 0;
+  }
+  
+  .right-panel > .bg-gray-800 { /* ImageSelector and AIAssistant */
+    flex: 5;
+    min-height: 0;
+  }
+  
+  .image-viewer {
+    background: #000;
+    position: relative;
+    height: 100%;
+  }
+  
+  .tools-panel {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .image-selector {
+    background: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .images-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .ai-report, .ai-chat {
+    background: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
