@@ -53,12 +53,12 @@ export const defectPrompt: string =
       "length": number,
       "data": [
       {
-            "x": number,
-            "y": number,
-            "width": number,
-            "height": number,
-            "label": string,
-            "confidence": number
+            "x": number, // x-coordinate of the top-left corner, the scope is [0,1]
+            "y": number, // y-coordinate of the top-left corner, the scope is [0,1]
+            "width": number, // width of the bounding box, the scope is [0,1]
+            "height": number, // height of the bounding box, the scope is [0,1] 
+            "label": string, // the name of the defect, such as "orange", "banana", etc.
+            "confidence": number // confidence score of the defect, the scope is [0,1]
       }
       // Repeat the above object for each detected defect
       ]
@@ -78,4 +78,4 @@ export const defectPrompt: string =
       }
       ]
       }
-      请严格按上述json格式输出，用英语回答，不要输出其他内容。`
+      请严格按上述json格式输出，不要输出其他内容。`
