@@ -1,5 +1,4 @@
 import { invoke } from '@tauri-apps/api/core';
-import LLMConfigDialog from './LLMConfigDialog';
 import React, { useState, useEffect } from 'react';
 import { Loader } from 'lucide-react';
 import { DiagnosisItem } from '../types/Diagnosis';
@@ -80,21 +79,6 @@ const EditableDiagnosisCard: React.FC<{
 };
 
 const AIAssistant: React.FC = () => {
-  const [configDialogOpen, setConfigDialogOpen] = useState(false);
-  const [llmConfig, setLlmConfig] = useState({
-    endpoint: "https://api.openai.com/v1/chat/completions",
-    key: "sk-xxx",
-    model: "gpt-3.5-turbo"
-  });
-
-  const handleSaveConfig = async (config: { endpoint: string; key: string; model: string }) => {
-    try {
-      await invoke('update_llm_config', { config });
-      setLlmConfig(config);
-    } catch (error) {
-      console.error('保存配置失败:', error);
-    }
-  };
   const { selectedImage } = useImageContext();
   const { diagnosis, addDiagnosisItem, removeDiagnosisItem, updateDiagnosisItem } = useDiagnosis();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -174,20 +158,6 @@ const AIAssistant: React.FC = () => {
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 flex-grow flex flex-col">
-      <div className="flex justify-end mb-4">
-        <button
-          onClick={() => setConfigDialogOpen(true)}
-          className="py-1 px-3 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded text-sm"
-        >
-          LLM配置
-        </button>
-      </div>
-      <LLMConfigDialog
-        open={configDialogOpen}
-        onClose={() => setConfigDialogOpen(false)}
-        onSave={handleSaveConfig}
-        initialConfig={llmConfig}
-      />
       {diagnosis.Diagnosis.length > 0 ? (
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {diagnosis.Diagnosis.map((item, index) => (
