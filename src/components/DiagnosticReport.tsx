@@ -4,12 +4,12 @@ import { FundusImage } from '../types/FundusImage';
 import { PatientInfoProps } from '../types/PatientInfo';
 import { Diagnosis } from '../types/Diagnosis';
 
-// Register Helvetica font
+// Register fonts with Chinese support
 Font.register({
-  family: 'Helvetica',
+  family: 'NotoSans',
   fonts: [
-    { src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-regular-webfont.ttf' },
-    { src: 'https://cdnjs.cloudflare.com/ajax/libs/ink/3.1.10/fonts/Roboto/roboto-bold-webfont.ttf', fontWeight: 'bold' }
+    { src: 'https://fonts.gstatic.com/ea/notosanssc/v1/NotoSansSC-Regular.otf' },
+    { src: 'https://fonts.gstatic.com/ea/notosanssc/v1/NotoSansSC-Bold.otf', fontWeight: 'bold' }
   ]
 });
 
@@ -17,7 +17,7 @@ Font.register({
 const styles = StyleSheet.create({
   page: {
     padding: 30,
-    fontFamily: 'Helvetica',
+    fontFamily: 'NotoSans',
     fontSize: 12
   },
   header: {
