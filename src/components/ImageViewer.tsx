@@ -163,11 +163,14 @@ const ImageContent: React.FC<ImageContentProps> = ({
         const index = parseInt(e.dataTransfer.getData('bboxIndex'));
         if (!isNaN(index)) {
           const rect = e.currentTarget.getBoundingClientRect();
-          const x = (e.clientX - rect.left) / rect.width;
-          const y = (e.clientY - rect.top) / rect.height;
+          const mouseX = (e.clientX - rect.left) / rect.width;
+          const mouseY = (e.clientY - rect.top) / rect.height;
+          const relX = parseFloat(e.dataTransfer.getData('relX'));
+          const relY = parseFloat(e.dataTransfer.getData('relY'));
           const updated = [...bboxes];
-          updated[index].x = Math.max(0, Math.min(1 - updated[index].width, x));
-          updated[index].y = Math.max(0, Math.min(1 - updated[index].height, y));
+          // 根据鼠标相对位置计算bbox新位置
+          updated[index].x = Math.max(0, Math.min(1 - updated[index].width, mouseX - relX * updated[index].width));
+          updated[index].y = Math.max(0, Math.min(1 - updated[index].height, mouseY - relY * updated[index].height));
           onBboxesChange(updated);
         } else {
           // 添加新bbox
@@ -220,6 +223,12 @@ const ImageContent: React.FC<ImageContentProps> = ({
                 draggable
                 onDragStart={(e) => {
                   e.dataTransfer.setData('bboxIndex', index.toString());
+                  // 记录鼠标相对于bbox的位置
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const relX = (e.clientX - rect.left) / rect.width;
+                  const relY = (e.clientY - rect.top) / rect.height;
+                  e.dataTransfer.setData('relX', relX.toString());
+                  e.dataTransfer.setData('relY', relY.toString());
                 }}
                 onDoubleClick={() => {
                   const newLabel = prompt('请输入标注区域名称:', bbox.label);
