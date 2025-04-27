@@ -10,6 +10,11 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
+async fn update_llm_config(config: config::ApiConfig) -> Result<(), String> {
+    config::save_api_config(&config).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 async fn call_llm_api(
     app_handle: tauri::AppHandle,
     messages: Vec<serde_json::Value>,
@@ -57,7 +62,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet, call_llm_api])
+        .invoke_handler(tauri::generate_handler![greet, call_llm_api, update_llm_config])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
