@@ -1,4 +1,0 @@
-[api]
-endpoint = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
-key = "708f6322-83a8-4392-82e3-145596a8a85c"
-model = "ep-20250219202818-fdhq5"
