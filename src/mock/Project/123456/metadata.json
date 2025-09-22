@@ -1,0 +1,33 @@
+{
+    "PatentInfo":{
+    "PatentID": "123456",
+    "PatentName": "John Doe",
+    "Age": 45,
+    "Gender": "Male"
+    },
+    "DoctorInfo":{
+        "DoctorName": "Dr. Smith",
+        "DoctorID": "654321",
+        "Department": "Ophthalmology"
+    },
+
+    "Images":{
+        "CFP": {
+            "Origin":"path/to/CFP_origin.jpg",
+            "processed":"path/to/CFP_processed.jpg"
+        },
+        "OCT": {
+            "Origin":"path/to/OCT_origin.jpg",
+            "processed":"path/to/OCT_processed.jpg"
+        },
+        "FFA": {
+            "Origin":"path/to/FFA_origin.jpg",
+            "processed":"path/to/FFA_processed.jpg"
+        }
+    },
+    
+    "Recognition":"path/to/Recognition.json",
+
+    "Diagnosis":"path/to/Diagnosis.json"
+    
+}
