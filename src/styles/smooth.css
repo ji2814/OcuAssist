@@ -1,0 +1,28 @@
+/* 平滑的缩放过渡效果 */
+body {
+  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+/* 确保缩放时不出现滚动条 */
+body.scaling {
+  overflow: hidden;
+}
+
+/* 字体平滑渲染 */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 响应式字体大小调整 */
+html {
+  transition: font-size 0.3s ease;
+}
+
+/* 针对不同平台的字体优化 */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  /* Windows Chrome/Edge 优化 */
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "STHeiti", "WenQuanYi Micro Hei", sans-serif;
+  }
+}

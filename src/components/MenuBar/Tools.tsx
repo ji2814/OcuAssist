@@ -1,11 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaFileExport, FaCog, FaUserMd } from 'react-icons/fa';
 import { useDoctorSettings } from '../../context/DoctorInfo';
 import { useAppSettings } from '../../context/AppSettings';
-import { SystemSettingsType } from '../../types/SystemSettingsType';
-import DoctorInfoDialog from './Dialogs/DoctorInfoDialog';
-import SettingsDialog from './Dialogs/SettingsDialog';
-import DiagnosticReport from './Dialogs/DiagnosticReport';
 
 // 工具栏按钮接口
 interface ToolbarButtonProps {
@@ -44,19 +41,14 @@ interface AppToolsProps {
 const AppTools: React.FC<AppToolsProps> = () => {
     const {
         doctorInfo,
-        updateDoctorInfo,
         exportReport
     } = useDoctorSettings();
     
     const {
-        settings: systemSettings,
-        updateSettings: updateSystemSettings,
         isLoading: isSettingsLoading
     } = useAppSettings();
     
-    const [isDoctorInfoDialogOpen, setIsDoctorInfoDialogOpen] = useState(false);
-    const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
-    const [isDiagnosticReportOpen, setIsDiagnosticReportOpen] = useState(false);
+    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
     // 处理用户操作的主函数
@@ -98,42 +90,25 @@ const AppTools: React.FC<AppToolsProps> = () => {
     const handleExportReport = async () => {
         try {
             await exportReport();
-            alert('报告导出成功！');
+            alert("导出报告功能暂未实现");
         } catch (error) {
             throw new Error('报告导出失败：' + (error instanceof Error ? error.message : '未知错误'));
         }
     };
 
-    // 打开诊断报告
+    // 导航到诊断报告页面
     const handleExportDiagnosisReport = () => {
-        setIsDiagnosticReportOpen(true);
+        navigate('/diagnostic-report');
     };
 
-    // 打开医生信息对话框
+    // 导航到医生信息页面
     const handleDoctorInfo = () => {
-        setIsDoctorInfoDialogOpen(true);
+        navigate('/doctor-info');
     };
 
-    // 打开系统设置对话框
+    // 导航到系统设置页面
     const handleSettings = () => {
-        setIsSettingsDialogOpen(true);
-    };
-
-    // 保存医生信息
-    const handleSaveDoctorInfo = (newDoctorInfo: { name: string; diagnosisTime: string }) => {
-        updateDoctorInfo(newDoctorInfo);
-        alert('医生信息保存成功！');
-    };
-
-    // 保存系统设置
-    const handleSaveSettings = async (newSettings: SystemSettingsType) => {
-        try {
-            await updateSystemSettings(newSettings);
-            alert('系统设置保存成功！');
-        } catch (error) {
-            alert(error instanceof Error ? error.message : '保存设置失败');
-            throw error;
-        }
+        navigate('/settings');
     };
 
     console.log("AppTools");
@@ -172,21 +147,6 @@ const AppTools: React.FC<AppToolsProps> = () => {
                 />
             </div>
 
-            {/* 医生信息对话框 */}
-            <DoctorInfoDialog
-                isOpen={isDoctorInfoDialogOpen}
-                onClose={() => setIsDoctorInfoDialogOpen(false)}
-                currentDoctorInfo={doctorInfo}
-                onSave={handleSaveDoctorInfo}
-            />
-
-            {/* 系统设置对话框 */}
-            <SettingsDialog
-                isOpen={isSettingsDialogOpen}
-                onClose={() => setIsSettingsDialogOpen(false)}
-                currentSettings={systemSettings}
-                onSave={handleSaveSettings}
-            />
             {isSettingsLoading && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-4 rounded-lg">
@@ -198,11 +158,6 @@ const AppTools: React.FC<AppToolsProps> = () => {
                 </div>
             )}
 
-            {/* 诊断报告对话框 */}
-            <DiagnosticReport
-                isOpen={isDiagnosticReportOpen}
-                onClose={() => setIsDiagnosticReportOpen(false)}
-            />
         </>
     );
 };

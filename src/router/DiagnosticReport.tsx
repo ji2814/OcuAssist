@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { usePatientInfo } from '../../../context/PatientInfo';
-import { useDiagnosis } from '../../../context/Diagnosis';
-import { useAIChat } from '../../../context/AIChat';
-import { useDoctorSettings } from '../../../context/DoctorInfo';
+import { usePatientInfo } from '../context/PatientInfo';
+import { useDiagnosis } from '../context/Diagnosis';
+import { useAIChat } from '../context/AIChat';
+import { useDoctorSettings } from '../context/DoctorInfo';
+import { useNavigate } from 'react-router-dom';
 import { FaDownload, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-
-interface DiagnosticReportProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
 
 interface MedicalCase {
   chiefComplaint: string;
@@ -41,11 +37,12 @@ interface DiagnosticReportData {
   reportDate: string;
 }
 
-const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) => {
+const DiagnosticReport: React.FC = () => {
   const { patentInfo } = usePatientInfo();
   const { diagnosisResults } = useDiagnosis();
   const { messages } = useAIChat();
   const { doctorInfo } = useDoctorSettings();
+  const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
@@ -123,17 +120,15 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
 
   // 初始化报告数据
   useEffect(() => {
-    if (isOpen) {
-      const medicalCase = extractMedicalCaseFromChat();
-      setReportData({
-        patientInfo: patentInfo,
-        medicalCase,
-        diagnosisResults,
-        doctorInfo,
-        reportDate: new Date().toLocaleDateString('zh-CN')
-      });
-    }
-  }, [isOpen, patentInfo, diagnosisResults, messages, doctorInfo]);
+    const medicalCase = extractMedicalCaseFromChat();
+    setReportData({
+      patientInfo: patentInfo,
+      medicalCase,
+      diagnosisResults,
+      doctorInfo,
+      reportDate: new Date().toLocaleDateString('zh-CN')
+    });
+  }, [patentInfo, diagnosisResults, messages, doctorInfo]);
 
   // 处理字段编辑
   const handleFieldEdit = (section: keyof MedicalCase, value: string) => {
@@ -298,11 +293,15 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
     }
   };
 
-  if (!isOpen || !reportData) return null;
+  const handleClose = () => {
+    navigate("/");
+  };
+
+  if (!reportData) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+    <div className="h-screen bg-gray-100 p-4 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-2xl max-w-4xl mx-auto h-full flex flex-col">
         {/* 头部 */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-800">诊断报告</h2>
@@ -333,7 +332,7 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
               {isGeneratingPDF ? '生成中...' : '导出PDF'}
             </button>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="flex items-center gap-2 px-3 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
             >
               <FaTimes />

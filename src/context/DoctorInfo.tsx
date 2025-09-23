@@ -29,6 +29,7 @@ export const DoctorSettingsProvider: React.FC<{ children: ReactNode }> = ({ chil
     // 导出报告功能
     const exportReport = async () => {
         try {
+            return
             // 获取当前患者信息
             const patientInfo = JSON.parse(localStorage.getItem('patientInfo') || '{}');
             

@@ -2,7 +2,7 @@
 
 const AppInfo = () => {
     const appName = "OcuAssist";
-    const logoUrl = "src/assets/seu-logo.svg";
+    const logoUrl = "/seu-logo.svg";
 
     {/* 左侧区域：软件名称和LOGO */ }
     return (

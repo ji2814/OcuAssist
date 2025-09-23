@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { usePatientInfo } from "../../../context/PatientInfo";
+import { usePatientInfo } from "../context/PatientInfo";
 import { useNavigate } from "react-router-dom";
 import { FaSave, FaTimes } from "react-icons/fa";
 

@@ -5,7 +5,10 @@ import MenuBar from "./MenuBar";
 import ThumbnailPanel from "./ThumbnailPanel";
 import AIRecognitionPanel from "./RecognitionPanel";
 import DiagnosisPanel from "./DiagnosisPanel";
-import PatientInfoForm from "./MenuBar/Dialogs/PatientInfoForm";
+import PatientInfoForm from "../router/PatientInfoForm";
+import DiagnosticReport from "../router/DiagnosticReport";
+import DoctorInfoDialog from "../router/DoctorInfoDialog";
+import SettingsDialog from "../router/SettingsDialog";
 import { PatientInfoProvider } from "../context/PatientInfo";
 import { FundImageProvider } from "../context/FundImage";
 import { DiagnosisProvider } from "../context/Diagnosis";
@@ -41,6 +44,9 @@ function App() {
                   <Routes>
                     <Route path="/" element={<MainApp />} />
                     <Route path="/new-patient" element={<PatientInfoForm />} />
+                    <Route path="/diagnostic-report" element={<DiagnosticReport />} />
+                    <Route path="/doctor-info" element={<DoctorInfoDialog />} />
+                    <Route path="/settings" element={<SettingsDialog />} />
                   </Routes>
                 </Router>
               </AIChatProvider>

@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { SystemSettingsType } from '../../../types/SystemSettingsType';
-import { FaCog, FaPalette, FaRobot, FaDesktop, FaSearchPlus } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { SystemSettingsType } from '../types/SystemSettingsType';
+import { FaCog, FaPalette, FaRobot, FaDesktop, FaSearchPlus, FaSave, FaTimes } from 'react-icons/fa';
+import { useAppSettings } from '../context/AppSettings';
 
-interface SettingsDialogProps {
-    isOpen: boolean;
-    onClose: () => void;
-    currentSettings: SystemSettingsType;
-    onSave: (settings: SystemSettingsType) => Promise<void>;
-}
-
-const SettingsDialog: React.FC<SettingsDialogProps> = ({
-    isOpen,
-    onClose,
-    currentSettings,
-    onSave
-}) => {
+const SettingsDialog: React.FC = () => {
+    const navigate = useNavigate();
+    const { settings: currentSettings, updateSettings } = useAppSettings();
+    
     const [activeTab, setActiveTab] = useState<'system' | 'api'>('system');
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
     const [uiScale, setUiScale] = useState<number>(100);
@@ -25,15 +18,13 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
-        if (isOpen) {
-            setTheme(currentSettings.theme);
-            setUiScale(currentSettings.uiScale || 100);
-            setDiagnosisModel(currentSettings.llmConfig.diagnosis.model_name);
-            setDiagnosisUrl(currentSettings.llmConfig.diagnosis.base_url);
-            setChatModel(currentSettings.llmConfig.chat.model_name);
-            setChatUrl(currentSettings.llmConfig.chat.base_url);
-        }
-    }, [isOpen, currentSettings]);
+        setTheme(currentSettings.theme);
+        setUiScale(currentSettings.uiScale || 100);
+        setDiagnosisModel(currentSettings.llmConfig.diagnosis.model_name);
+        setDiagnosisUrl(currentSettings.llmConfig.diagnosis.base_url);
+        setChatModel(currentSettings.llmConfig.chat.model_name);
+        setChatUrl(currentSettings.llmConfig.chat.base_url);
+    }, [currentSettings]);
 
     const handleSave = async () => {
         if (!diagnosisModel.trim() || !diagnosisUrl.trim() || !chatModel.trim() || !chatUrl.trim()) {
@@ -51,7 +42,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
         }
 
         setIsSaving(true);
-        
+
         try {
             const newSettings: SystemSettingsType = {
                 theme,
@@ -70,8 +61,9 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                 }
             };
 
-            await onSave(newSettings);
-            onClose();
+            await updateSettings(newSettings);
+            alert('系统设置保存成功！');
+            navigate('/');
         } catch (error) {
             alert(error instanceof Error ? error.message : '保存设置失败');
         } finally {
@@ -79,23 +71,25 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
         }
     };
 
+    const handleCancel = () => {
+        navigate('/');
+    };
+
     const handleResetToDefault = () => {
         setTheme('light');
         // 根据平台设置默认缩放
         const userAgent = navigator.userAgent;
         const isWindows = userAgent.includes('Windows');
-        setUiScale(isWindows ? 85 : 100);
+        setUiScale(isWindows ? 95 : 100);
         setDiagnosisModel('llama2');
         setDiagnosisUrl('http://localhost:8000/v1/generate');
         setChatModel('llama2');
         setChatUrl('http://localhost:8000/v1/generate');
     };
 
-    if (!isOpen) return null;
-
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg w-full max-w-3xl mx-4 max-h-[85vh] overflow-hidden flex shadow-xl">
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-4xl max-h-[85vh] overflow-hidden flex">
                 {/* 左侧切换按钮和操作区域 */}
                 <div className="w-48 bg-gray-50 p-4 border-r border-gray-200 flex flex-col">
                     <h2 className="text-lg font-bold mb-4 text-gray-800 flex items-center gap-2">
@@ -135,17 +129,19 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                         </button>
                         <div className="space-y-2">
                             <button
-                                onClick={onClose}
+                                onClick={handleCancel}
                                 disabled={isSaving}
-                                className="w-full px-3 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors text-left disabled:opacity-50"
+                                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors disabled:opacity-50"
                             >
+                                <FaTimes />
                                 取消
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={isSaving}
-                                className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-left disabled:opacity-50"
+                                className="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
                             >
+                                <FaSave />
                                 {isSaving ? '保存中...' : '保存'}
                             </button>
                         </div>
@@ -216,17 +212,17 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                                     </div>
                                     <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-md">
                                         <p className="font-medium">💡 提示：</p>
-                                        <p>• Windows系统建议使用85%-90%缩放以获得最佳显示效果</p>
+                                        <p>• Windows系统建议使用95%缩放以获得最佳显示效果</p>
                                         <p>• Linux/Mac系统建议使用100%缩放</p>
                                         <p>• 可根据个人偏好和屏幕分辨率调整</p>
                                     </div>
                                     <div className="flex gap-2">
                                         <button
                                             type="button"
-                                            onClick={() => setUiScale(85)}
+                                            onClick={() => setUiScale(95)}
                                             className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
                                         >
-                                            Windows推荐(85%)
+                                            Windows推荐(95%)
                                         </button>
                                         <button
                                             type="button"
@@ -312,7 +308,6 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                         </div>
                     )}
                 </div>
-
             </div>
         </div>
     );

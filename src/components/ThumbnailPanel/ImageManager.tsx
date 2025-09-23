@@ -65,16 +65,16 @@ const ImageManager: React.FC = () => {
 
 
   return (
-    <div className="flex flex-col h-full max-h-screen">
+    <div className="flex flex-col h-full">
       {/* 顶部标签页 */}
       <div className="bg-white border-b border-gray-200 px-4 pt-4 flex-shrink-0">
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 overflow-x-auto scrollbar-hide min-w-0">
           {(['CFP', 'OCT', 'FFA'] as ModalType[]).map((modalType) => (
             <button
               key={modalType}
               onClick={() => setActiveModal(modalType)}
               className={clsx(
-                'px-4 py-2 font-medium text-sm border-b-2 transition-colors',
+                'px-4 py-2 font-medium text-sm border-b-2 transition-colors flex-shrink-0 whitespace-nowrap',
                 {
                   'border-blue-500 text-blue-600': activeModal === modalType,
                   'border-transparent text-gray-500 hover:text-gray-700': activeModal !== modalType
@@ -105,8 +105,8 @@ const ImageManager: React.FC = () => {
 
       {/* 左右眼选择对话框 */}
       {showEyeSelection && pendingImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-4 sm:p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
             <h3 className="text-lg font-semibold mb-4">选择眼睛类型</h3>
             
             {/* 图像预览 */}
@@ -114,13 +114,13 @@ const ImageManager: React.FC = () => {
               <img
                 src={pendingImage.url}
                 alt="预览"
-                className="w-full h-48 object-contain bg-gray-100 rounded"
+                className="w-full max-h-48 sm:max-h-64 object-contain bg-gray-100 rounded"
               />
             </div>
             
             <div className="mb-4">
               <p className="text-sm text-gray-600 mb-2">请选择此图像是左眼还是右眼：</p>
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                 <button
                   onClick={() => confirmAddImage('OD')}
                   className="flex-1 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"

@@ -73,7 +73,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ modalType, className }) => 
           暂无{modalType}图像
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto space-y-6 min-h-0 max-h-[calc(100vh-200px)]">
+        <div className="flex-1 overflow-y-auto space-y-6 min-h-0">
           {groupedImages.map(({ date, images }) => (
             <div key={date} className="space-y-3">
               {/* 日期分组标题 */}
@@ -105,13 +105,13 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ modalType, className }) => 
                       )}
                       onDoubleClick={() => handleImageDoubleClick(image)}
                     >
-                      {/* 图像预览 - 纵向排列，固定高度 */}
-                      <div className="h-48 bg-gray-100 flex items-center justify-center relative">
+                      {/* 图像预览 - 纵向排列，响应式高度 */}
+                      <div className="min-h-[12rem] max-h-[20rem] aspect-video bg-gray-100 flex items-center justify-center relative">
                         {image.url ? (
                           <img
                             src={image.url}
                             alt={`${modalType}图像`}
-                            className="max-w-full max-h-full object-contain"
+                            className="w-full h-full object-contain"
                           />
                         ) : (
                           <div className="text-gray-400 text-sm">
