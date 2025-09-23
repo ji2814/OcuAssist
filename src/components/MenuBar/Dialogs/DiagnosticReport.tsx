@@ -46,7 +46,7 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
   const { diagnosisResults } = useDiagnosis();
   const { messages } = useAIChat();
   const { doctorInfo } = useDoctorSettings();
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [reportData, setReportData] = useState<DiagnosticReportData | null>(null);
@@ -84,7 +84,7 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
               chiefComplaints.push(match[1].trim());
             }
           }
-          
+
           // 提取现病史
           if (content.includes('现病史：')) {
             const match = content.match(/现病史：([\s\S]*?)(?:\n\n|主诉：|既往史：|体格检查：|$)/);
@@ -92,7 +92,7 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
               historyOfPresentIllnesses.push(match[1].trim());
             }
           }
-          
+
           // 提取既往史
           if (content.includes('既往史：')) {
             const match = content.match(/既往史：([\s\S]*?)(?:\n\n|主诉：|现病史：|体格检查：|$)/);
@@ -100,7 +100,7 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
               pastHistories.push(match[1].trim());
             }
           }
-          
+
           // 提取体格检查
           if (content.includes('体格检查：')) {
             const match = content.match(/体格检查：([\s\S]*?)(?:\n\n|主诉：|现病史：|既往史：|$)/);
@@ -164,7 +164,7 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
       clonedElement.style.position = 'absolute';
       clonedElement.style.left = '-9999px';
       clonedElement.style.top = '0';
-      
+
       // 替换可能包含oklch的CSS类为安全的颜色
       const replaceOklchColors = (element: HTMLElement) => {
         const walker = document.createTreeWalker(
@@ -172,12 +172,12 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
           NodeFilter.SHOW_ELEMENT,
           null
         );
-        
+
         let node: Element | null;
         while (node = walker.nextNode() as Element) {
           const computedStyle = window.getComputedStyle(node);
           const htmlNode = node as HTMLElement;
-          
+
           // 检查并替换可能的oklch颜色
           ['color', 'backgroundColor', 'borderColor'].forEach(prop => {
             const value = computedStyle.getPropertyValue(prop);
@@ -196,7 +196,7 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
               }
             }
           });
-          
+
           // 特殊处理一些常见的Tailwind类
           if (htmlNode.className) {
             const className = htmlNode.className;
@@ -218,10 +218,10 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
           }
         }
       };
-      
+
       // 应用颜色替换
       replaceOklchColors(clonedElement);
-      
+
       // 临时添加到DOM
       document.body.appendChild(clonedElement);
 
@@ -237,8 +237,8 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
             // 忽略可能包含不支持CSS的元素
             const style = window.getComputedStyle(element);
             return style.getPropertyValue('color').includes('oklch') ||
-                   style.getPropertyValue('background-color').includes('oklch') ||
-                   style.getPropertyValue('border-color').includes('oklch');
+              style.getPropertyValue('background-color').includes('oklch') ||
+              style.getPropertyValue('border-color').includes('oklch');
           },
           onclone: (clonedDoc) => {
             // 在克隆的文档中移除所有可能包含oklch的样式
@@ -389,7 +389,7 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
               <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">
                 病例信息
               </h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <h3 className="font-medium text-gray-700 mb-2">主诉</h3>
@@ -462,7 +462,7 @@ const DiagnosticReport: React.FC<DiagnosticReportProps> = ({ isOpen, onClose }) 
               <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">
                 诊断结果
               </h2>
-              
+
               <div className="space-y-6">
                 {Object.entries(reportData.diagnosisResults).map(([modalType, result]) => (
                   <div key={modalType} className="border border-gray-200 rounded-lg p-4">

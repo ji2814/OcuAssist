@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SystemSettingsType } from '../../../types/SystemSettingsType';
-import { FaCog, FaPalette, FaRobot, FaDesktop, FaKey } from 'react-icons/fa';
+import { FaCog, FaPalette, FaRobot, FaDesktop, FaSearchPlus } from 'react-icons/fa';
 
 interface SettingsDialogProps {
     isOpen: boolean;
@@ -17,6 +17,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 }) => {
     const [activeTab, setActiveTab] = useState<'system' | 'api'>('system');
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
+    const [uiScale, setUiScale] = useState<number>(100);
     const [diagnosisModel, setDiagnosisModel] = useState('');
     const [diagnosisUrl, setDiagnosisUrl] = useState('');
     const [chatModel, setChatModel] = useState('');
@@ -26,6 +27,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
     useEffect(() => {
         if (isOpen) {
             setTheme(currentSettings.theme);
+            setUiScale(currentSettings.uiScale || 100);
             setDiagnosisModel(currentSettings.llmConfig.diagnosis.model_name);
             setDiagnosisUrl(currentSettings.llmConfig.diagnosis.base_url);
             setChatModel(currentSettings.llmConfig.chat.model_name);
@@ -53,6 +55,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
         try {
             const newSettings: SystemSettingsType = {
                 theme,
+                uiScale: Math.max(50, Math.min(200, uiScale)), // 限制在50%-200%之间
                 llmConfig: {
                     diagnosis: {
                         model_name: diagnosisModel.trim(),
@@ -78,6 +81,10 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 
     const handleResetToDefault = () => {
         setTheme('light');
+        // 根据平台设置默认缩放
+        const userAgent = navigator.userAgent;
+        const isWindows = userAgent.includes('Windows');
+        setUiScale(isWindows ? 85 : 100);
         setDiagnosisModel('llama2');
         setDiagnosisUrl('http://localhost:8000/v1/generate');
         setChatModel('llama2');
@@ -88,7 +95,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg w-[700px] max-w-4xl mx-4 max-h-[80vh] overflow-hidden flex">
+            <div className="bg-white rounded-lg w-full max-w-3xl mx-4 max-h-[85vh] overflow-hidden flex shadow-xl">
                 {/* 左侧切换按钮和操作区域 */}
                 <div className="w-48 bg-gray-50 p-4 border-r border-gray-200 flex flex-col">
                     <h2 className="text-lg font-bold mb-4 text-gray-800 flex items-center gap-2">
@@ -106,7 +113,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                             <FaDesktop className="text-lg" />
                             <span>系统设置</span>
                         </button>
-                        <button
+                        {/* <button
                             onClick={() => setActiveTab('api')}
                             className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors ${activeTab === 'api'
                                 ? 'bg-blue-100 text-blue-700 border border-blue-200'
@@ -115,7 +122,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                         >
                             <FaKey className="text-lg" />
                             <span>API设置</span>
-                        </button>
+                        </button> */}
                     </div>
 
                     {/* 底部按钮 */}
@@ -149,33 +156,87 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                 <div className="flex-1 p-6 overflow-y-auto">
                     {activeTab === 'system' && (
                         <div className="space-y-6">
-                            <h3 className="text-lg font-semibold mb-3 text-gray-700 flex items-center gap-2">
-                                <FaPalette className="text-purple-600" />
-                                界面主题
-                            </h3>
-                            <div className="space-y-2">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="theme"
-                                        value="light"
-                                        checked={theme === 'light'}
-                                        onChange={(e) => setTheme(e.target.value as 'light' | 'dark')}
-                                        className="text-blue-600"
-                                    />
-                                    <span className="text-gray-700">浅色主题</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="theme"
-                                        value="dark"
-                                        checked={theme === 'dark'}
-                                        onChange={(e) => setTheme(e.target.value as 'light' | 'dark')}
-                                        className="text-blue-600"
-                                    />
-                                    <span className="text-gray-700">深色主题</span>
-                                </label>
+                            {/* 界面主题 */}
+                            <div>
+                                <h3 className="text-lg font-semibold mb-3 text-gray-700 flex items-center gap-2">
+                                    <FaPalette className="text-purple-600" />
+                                    界面主题
+                                </h3>
+                                <div className="space-y-2">
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name="theme"
+                                            value="light"
+                                            checked={theme === 'light'}
+                                            onChange={(e) => setTheme(e.target.value as 'light' | 'dark')}
+                                            className="text-blue-600"
+                                        />
+                                        <span className="text-gray-700">浅色主题</span>
+                                    </label>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name="theme"
+                                            value="dark"
+                                            checked={theme === 'dark'}
+                                            onChange={(e) => setTheme(e.target.value as 'light' | 'dark')}
+                                            className="text-blue-600"
+                                        />
+                                        <span className="text-gray-700">深色主题</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {/* 界面缩放 */}
+                            <div>
+                                <h3 className="text-lg font-semibold mb-3 text-gray-700 flex items-center gap-2">
+                                    <FaSearchPlus className="text-green-600" />
+                                    界面缩放
+                                </h3>
+                                <div className="space-y-3">
+                                    <div className="flex items-center gap-4">
+                                        <label className="text-sm font-medium text-gray-700 min-w-0">
+                                            缩放比例: {uiScale}%
+                                        </label>
+                                        <input
+                                            type="range"
+                                            min="50"
+                                            max="200"
+                                            step="5"
+                                            value={uiScale}
+                                            onChange={(e) => setUiScale(Number(e.target.value))}
+                                            className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                                        />
+                                    </div>
+                                    <div className="flex justify-between text-xs text-gray-500">
+                                        <span>50%</span>
+                                        <span>100%</span>
+                                        <span>200%</span>
+                                    </div>
+                                    <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded-md">
+                                        <p className="font-medium">💡 提示：</p>
+                                        <p>• Windows系统建议使用85%-90%缩放以获得最佳显示效果</p>
+                                        <p>• Linux/Mac系统建议使用100%缩放</p>
+                                        <p>• 可根据个人偏好和屏幕分辨率调整</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setUiScale(85)}
+                                            className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                                        >
+                                            Windows推荐(85%)
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setUiScale(100)}
+                                            className="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+                                        >
+                                            标准(100%)
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )}
