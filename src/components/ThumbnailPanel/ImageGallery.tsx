@@ -10,21 +10,21 @@ interface ImageGalleryProps {
 }
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ modalType, className }) => {
-  const { 
-    getImagesByModal, 
-    selectedImage, 
-    selectImage, 
-    removeImage, 
-    pinImage, 
-    unpinImage 
+  const {
+    getImagesByModal,
+    selectedImage,
+    selectImage,
+    removeImage,
+    pinImage,
+    unpinImage
   } = useFundImage();
 
   const images = getImagesByModal(modalType);
-  
+
   // 按日期分组图像
   const groupImagesByDate = (images: any[]) => {
     const grouped: { [date: string]: any[] } = {};
-    
+
     images.forEach(image => {
       const date = image.uploadDate || '未知日期';
       if (!grouped[date]) {
@@ -32,20 +32,20 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ modalType, className }) => 
       }
       grouped[date].push(image);
     });
-    
+
     // 按日期降序排序
     const sortedDates = Object.keys(grouped).sort((a, b) => {
       if (a === '未知日期') return 1;
       if (b === '未知日期') return -1;
       return new Date(b).getTime() - new Date(a).getTime();
     });
-    
+
     return sortedDates.map(date => ({
       date,
       images: grouped[date]
     }));
   };
-  
+
   const groupedImages = groupImagesByDate(images);
 
   const handleImageDoubleClick = (image: any) => {
@@ -83,42 +83,60 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ modalType, className }) => 
                 </h3>
                 <div className="flex-1 h-px bg-gray-200 ml-3"></div>
               </div>
-              
+
               {/* 该日期的图像列表 - 纵向排列 */}
               <div className="space-y-4">
                 {images.map((image) => {
                   const isPinned = image.metadata?.pinned || false;
                   const isSelected = selectedImage?.imageID === image.imageID;
                   const eyeType = image.metadata?.eye;
-                  
+
                   return (
                     <div
                       key={image.imageID}
                       className={clsx(
-                        'relative border-2 rounded-lg overflow-hidden cursor-pointer transition-all',
-                        'hover:shadow-lg',
+                        'relative border-2 rounded-lg overflow-hidden cursor-pointer transition-all duration-200',
+                        'hover:shadow-lg hover:border-gray-300',
+                        'bg-white',
                         {
-                          'border-blue-500': isSelected,
+                          'border-blue-500 shadow-md': isSelected,
                           'border-gray-200': !isSelected,
                           'ring-2 ring-yellow-400': isPinned
                         }
                       )}
                       onDoubleClick={() => handleImageDoubleClick(image)}
                     >
-                      {/* 图像预览 - 纵向排列，响应式高度 */}
-                      <div className="min-h-[12rem] max-h-[20rem] aspect-video bg-gray-100 flex items-center justify-center relative">
+                      {/* 图像预览 - 自适应高度，保持图像原始比例 */}
+                      <div className="bg-gray-50 flex items-center justify-center relative overflow-hidden min-h-[8rem]">
                         {image.url ? (
                           <img
                             src={image.url}
                             alt={`${modalType}图像`}
-                            className="w-full h-full object-contain"
+                            className="w-full h-auto max-h-[24rem] object-contain transition-opacity duration-300"
+                            style={{ minHeight: '8rem', opacity: '0' }}
+                            onLoad={(e) => {
+                              e.currentTarget.style.opacity = '1';
+                            }}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const errorDiv = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (errorDiv) errorDiv.style.display = 'flex';
+                            }}
                           />
-                        ) : (
-                          <div className="text-gray-400 text-sm">
-                            图像预览
+                        ) : null}
+                        {/* 错误状态显示 */}
+                        <div
+                          className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm bg-gray-50"
+                          style={{ display: image.url ? 'none' : 'flex' }}
+                        >
+                          <div className="text-center">
+                            <div className="text-gray-300 text-2xl mb-2">📷</div>
+                            <div>
+                              {image.url ? '图像加载失败' : '暂无图像'}
+                            </div>
                           </div>
-                        )}
-                        
+                        </div>
+
                         {/* 左右眼标签 - 右下角 */}
                         {eyeType && (
                           <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs font-medium">
@@ -126,8 +144,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ modalType, className }) => 
                           </div>
                         )}
                       </div>
-                      
-                      
+
                       {/* 操作按钮 */}
                       <div className="absolute top-2 right-2 flex gap-1">
                         {/* 置顶/取消置顶按钮 */}
@@ -144,7 +161,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ modalType, className }) => 
                         >
                           <FaThumbtack />
                         </button>
-                        
+
                         {/* 删除按钮 */}
                         <button
                           onClick={(e) => handleDeleteImage(image.imageID!, e)}
@@ -154,7 +171,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ modalType, className }) => 
                           <FaTrash />
                         </button>
                       </div>
-                      
+
                       {/* 选中状态指示器 */}
                       {isSelected && (
                         <div className="absolute top-2 left-2 bg-blue-500 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
@@ -162,7 +179,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ modalType, className }) => 
                           已选中
                         </div>
                       )}
-                      
+
                       {/* 置顶状态指示器 */}
                       {isPinned && (
                         <div className="absolute bottom-2 left-2 bg-yellow-500 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
