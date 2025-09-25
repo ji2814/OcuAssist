@@ -7,6 +7,7 @@ import AIRecognitionPanel from "./RecognitionPanel";
 import DiagnosisPanel from "./DiagnosisPanel";
 import PatientInfoForm from "../router/PatientInfoForm";
 import DiagnosticReport from "../router/DiagnosticReport";
+import AutomorphReport from "../router/AutomorphReport";
 import DoctorInfoDialog from "../router/DoctorInfoDialog";
 import SettingsDialog from "../router/SettingsDialog";
 import { PatientInfoProvider } from "../context/PatientInfo";
@@ -15,6 +16,7 @@ import { DiagnosisProvider } from "../context/Diagnosis";
 import { AIChatProvider } from "../context/AIChat";
 import { DoctorSettingsProvider } from "../context/DoctorInfo";
 import { AppSettingsProvider } from "../context/AppSettings";
+import { RecognitionProvider } from "../context/Recognition";
 
 function MainApp() {
   return (
@@ -38,19 +40,22 @@ function App() {
       <PatientInfoProvider>
         <DoctorSettingsProvider>
           <FundImageProvider>
-            <DiagnosisProvider>
-              <AIChatProvider>
-                <Router>
-                  <Routes>
-                    <Route path="/" element={<MainApp />} />
-                    <Route path="/new-patient" element={<PatientInfoForm />} />
-                    <Route path="/diagnostic-report" element={<DiagnosticReport />} />
-                    <Route path="/doctor-info" element={<DoctorInfoDialog />} />
-                    <Route path="/settings" element={<SettingsDialog />} />
-                  </Routes>
-                </Router>
-              </AIChatProvider>
-            </DiagnosisProvider>
+            <RecognitionProvider>
+              <DiagnosisProvider>
+                <AIChatProvider>
+                  <Router>
+                    <Routes>
+                      <Route path="/" element={<MainApp />} />
+                      <Route path="/new-patient" element={<PatientInfoForm />} />
+                      <Route path="/diagnostic-report" element={<DiagnosticReport />} />
+                      <Route path="/automorph-report" element={<AutomorphReport />} />
+                      <Route path="/doctor-info" element={<DoctorInfoDialog />} />
+                      <Route path="/settings" element={<SettingsDialog />} />
+                    </Routes>
+                  </Router>
+                </AIChatProvider>
+              </DiagnosisProvider>
+            </RecognitionProvider>
           </FundImageProvider>
         </DoctorSettingsProvider>
       </PatientInfoProvider>

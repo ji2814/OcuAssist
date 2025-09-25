@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaFileExport, FaCog, FaUserMd } from 'react-icons/fa';
+import { FaFileExport, FaCog, FaUserMd, FaChevronDown } from 'react-icons/fa';
 import { useDoctorSettings } from '../../context/DoctorInfo';
 import { useAppSettings } from '../../context/AppSettings';
+import React, { useState, useRef, useEffect } from 'react';
 
 // 工具栏按钮接口
 interface ToolbarButtonProps {
@@ -13,6 +13,78 @@ interface ToolbarButtonProps {
     disabled?: boolean;
     tooltip?: string;
 }
+
+interface ExportDropdownProps {
+    isLoading?: boolean;
+}
+
+// 导出报告下拉菜单
+const ExportDropdown: React.FC<ExportDropdownProps> = ({ isLoading = false }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
+    const handleExportReport = (type: 'recognition' | 'automorph') => {
+        setIsOpen(false);
+        if (type === 'recognition') {
+            // 这里可以调用现有的导出功能
+            alert("检测报告功能暂未实现");
+        } else if (type === 'automorph') {
+            navigate('/automorph-report');
+        }
+    };
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                disabled={isLoading}
+                className={`toolbar-button flex items-center gap-2 px-3 py-2 rounded-md hover:bg-blue-500 transition-colors ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                title="导出报告"
+            >
+                <span className="text-lg"><FaFileExport /></span>
+                <span className="text-sm font-medium">检测报告</span>
+                <span className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+                    <FaChevronDown className="text-xs" />
+                </span>
+            </button>
+
+            {isOpen && (
+                <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+                    <div className="py-1">
+                        <button
+                            onClick={() => handleExportReport('recognition')}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
+                        >
+                            <FaFileExport className="text-gray-500" />
+                            导出检测报告
+                        </button>
+                        <button
+                            onClick={() => handleExportReport('automorph')}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-2"
+                        >
+                            <FaFileExport className="text-gray-500" />
+                            导出Automorph报告
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
 
 const ToolbarButton: React.FC<ToolbarButtonProps> = ({
     icon,
@@ -43,11 +115,11 @@ const AppTools: React.FC<AppToolsProps> = () => {
         doctorInfo,
         exportReport
     } = useDoctorSettings();
-    
+
     const {
         isLoading: isSettingsLoading
     } = useAppSettings();
-    
+
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -57,24 +129,24 @@ const AppTools: React.FC<AppToolsProps> = () => {
 
         try {
             setIsLoading(true);
-            
+
             switch (action) {
                 case 'export-diagnosis-report':
                     handleExportDiagnosisReport();
                     break;
-                    
+
                 case 'export-recognition-report':
                     await handleExportReport();
                     break;
-                    
+
                 case 'doctor-info':
                     handleDoctorInfo();
                     break;
-                    
+
                 case 'settings':
                     handleSettings();
                     break;
-                    
+
                 default:
                     console.warn('未知的操作类型:', action);
             }
@@ -101,6 +173,7 @@ const AppTools: React.FC<AppToolsProps> = () => {
         navigate('/diagnostic-report');
     };
 
+
     // 导航到医生信息页面
     const handleDoctorInfo = () => {
         navigate('/doctor-info');
@@ -117,13 +190,7 @@ const AppTools: React.FC<AppToolsProps> = () => {
         <>
             {/* 右侧区域：用户操作功能 */}
             <div className="flex items-center gap-2">
-                <ToolbarButton
-                    icon={<FaFileExport />}
-                    label="检测报告"
-                    onClick={() => handleUserAction('export-recognition-report')}
-                    tooltip="导出检测报告"
-                    disabled={isLoading}
-                />
+                <ExportDropdown isLoading={isLoading} />
                 <ToolbarButton
                     icon={<FaFileExport />}
                     label="诊断报告"
