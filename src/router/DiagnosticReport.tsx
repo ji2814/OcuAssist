@@ -228,6 +228,12 @@ const DiagnosticReport: React.FC = () => {
           allowTaint: true,
           backgroundColor: '#ffffff',
           foreignObjectRendering: false,
+          width: 794, // A4纵向宽度 (210mm * 96dpi / 25.4mm)
+          height: 1123, // A4纵向高度 (297mm * 96dpi / 25.4mm)
+          windowWidth: 794,
+          windowHeight: 1123,
+          scrollX: 0,
+          scrollY: 0,
           ignoreElements: (element) => {
             // 忽略可能包含不支持CSS的元素
             const style = window.getComputedStyle(element);
@@ -343,7 +349,7 @@ const DiagnosticReport: React.FC = () => {
 
         {/* 报告内容 */}
         <div className="flex-1 overflow-y-auto p-6">
-          <div id="diagnostic-report" className="bg-white p-8">
+          <div id="diagnostic-report" className="bg-white p-8" style={{ width: '794px', minHeight: '1123px' }}>
             {/* 报告标题 */}
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-800 mb-2">眼科诊断报告</h1>
@@ -355,7 +361,7 @@ const DiagnosticReport: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">
                 患者信息
               </h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <span className="font-medium text-gray-700">患者姓名：</span>
                   <span className="text-gray-800">{reportData.patientInfo.patentName}</span>
@@ -389,68 +395,72 @@ const DiagnosticReport: React.FC = () => {
                 病例信息
               </h2>
 
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium text-gray-700 mb-2">主诉</h3>
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-800 text-lg">主诉</h3>
                   {isEditing ? (
                     <textarea
                       value={reportData.medicalCase.chiefComplaint}
                       onChange={(e) => handleFieldEdit('chiefComplaint', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows={3}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical transition-all duration-200"
+                      rows={4}
+                      placeholder="请输入主诉信息..."
                     />
                   ) : (
-                    <p className="text-gray-800 bg-gray-50 p-3 rounded">
+                    <div className="text-gray-800 bg-gray-50 p-4 rounded-lg border border-gray-200 min-h-[6rem]">
                       {reportData.medicalCase.chiefComplaint || '暂无主诉信息'}
-                    </p>
+                    </div>
                   )}
                 </div>
 
-                <div>
-                  <h3 className="font-medium text-gray-700 mb-2">现病史</h3>
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-800 text-lg">现病史</h3>
                   {isEditing ? (
                     <textarea
                       value={reportData.medicalCase.historyOfPresentIllness}
                       onChange={(e) => handleFieldEdit('historyOfPresentIllness', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows={3}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical transition-all duration-200"
+                      rows={4}
+                      placeholder="请输入现病史信息..."
                     />
                   ) : (
-                    <p className="text-gray-800 bg-gray-50 p-3 rounded">
+                    <div className="text-gray-800 bg-gray-50 p-4 rounded-lg border border-gray-200 min-h-[6rem]">
                       {reportData.medicalCase.historyOfPresentIllness || '暂无现病史信息'}
-                    </p>
+                    </div>
                   )}
                 </div>
 
-                <div>
-                  <h3 className="font-medium text-gray-700 mb-2">既往史</h3>
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-800 text-lg">既往史</h3>
                   {isEditing ? (
                     <textarea
                       value={reportData.medicalCase.pastHistory}
                       onChange={(e) => handleFieldEdit('pastHistory', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows={3}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical transition-all duration-200"
+                      rows={4}
+                      placeholder="请输入既往史信息..."
                     />
                   ) : (
-                    <p className="text-gray-800 bg-gray-50 p-3 rounded">
+                    <div className="text-gray-800 bg-gray-50 p-4 rounded-lg border border-gray-200 min-h-[6rem]">
                       {reportData.medicalCase.pastHistory || '暂无既往史信息'}
-                    </p>
+                    </div>
                   )}
                 </div>
 
-                <div>
-                  <h3 className="font-medium text-gray-700 mb-2">体格检查</h3>
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-gray-800 text-lg">体格检查</h3>
                   {isEditing ? (
                     <textarea
                       value={reportData.medicalCase.physicalExamination}
                       onChange={(e) => handleFieldEdit('physicalExamination', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows={3}
+                      className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical transition-all duration-200"
+                      rows={4}
+                      placeholder="请输入体格检查信息..."
                     />
                   ) : (
-                    <p className="text-gray-800 bg-gray-50 p-3 rounded">
+                    <div className="text-gray-800 bg-gray-50 p-4 rounded-lg border border-gray-200 min-h-[6rem]">
                       {reportData.medicalCase.physicalExamination || '暂无体格检查信息'}
-                    </p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -464,35 +474,35 @@ const DiagnosticReport: React.FC = () => {
 
               <div className="space-y-6">
                 {Object.entries(reportData.diagnosisResults).map(([modalType, result]) => (
-                  <div key={modalType} className="border border-gray-200 rounded-lg p-4">
-                    <h3 className="font-semibold text-gray-800 mb-3">
+                  <div key={modalType} className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+                    <h3 className="font-semibold text-gray-800 mb-4 text-lg border-b border-gray-100 pb-2">
                       {modalType === 'OCT' ? 'OCT检查' : modalType === 'FFA' ? 'FFA检查' : 'CFP检查'}
                     </h3>
                     {result ? (
-                      <div className="space-y-2">
-                        <div>
-                          <span className="font-medium text-gray-700">图像描述：</span>
-                          <span className="text-gray-800">{result.imageDescription}</span>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+                          <span className="font-medium text-gray-700 flex-shrink-0 min-w-16">图像描述：</span>
+                          <span className="text-gray-800 leading-relaxed">{result.imageDescription}</span>
                         </div>
-                        <div>
-                          <span className="font-medium text-gray-700">病灶类型：</span>
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+                          <span className="font-medium text-gray-700 flex-shrink-0 min-w-16">病灶类型：</span>
                           <span className="text-gray-800">{result.lesionType.join(', ')}</span>
                         </div>
-                        <div>
-                          <span className="font-medium text-gray-700">疾病类型：</span>
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+                          <span className="font-medium text-gray-700 flex-shrink-0 min-w-16">疾病类型：</span>
                           <span className="text-gray-800">{result.diseaseType}</span>
                         </div>
-                        <div>
-                          <span className="font-medium text-gray-700">诊断依据：</span>
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+                          <span className="font-medium text-gray-700 flex-shrink-0 min-w-16">诊断依据：</span>
                           <span className="text-gray-800">{result.diagnosticBasis.join(', ')}</span>
                         </div>
-                        <div>
-                          <span className="font-medium text-gray-700">置信度：</span>
-                          <span className="text-gray-800">{Math.round(result.confidence * 100)}%</span>
+                        <div className="flex flex-col sm:flex-row sm:items-start gap-2">
+                          <span className="font-medium text-gray-700 flex-shrink-0 min-w-16">置信度：</span>
+                          <span className="text-gray-800 font-medium">{Math.round(result.confidence * 100)}%</span>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic">暂无{modalType}诊断结果</p>
+                      <p className="text-gray-500 italic text-center py-4">暂无{modalType}诊断结果</p>
                     )}
                   </div>
                 ))}

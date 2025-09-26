@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaDownload, FaTimes } from 'react-icons/fa';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import '../styles/report-layout.css';
 
 interface AutomorphReportData {
   patientInfo: {
@@ -144,6 +145,10 @@ const AutomorphReport: React.FC = () => {
           foreignObjectRendering: false,
           width: 1123, // A4横向宽度 (210mm * 96dpi / 25.4mm)
           height: 794, // A4横向高度 (297mm * 96dpi / 25.4mm)
+          windowWidth: 1123,
+          windowHeight: 794,
+          scrollX: 0,
+          scrollY: 0,
           ignoreElements: (element) => {
             // 忽略可能包含不支持CSS的元素
             const style = window.getComputedStyle(element);
@@ -234,19 +239,19 @@ const AutomorphReport: React.FC = () => {
 
         {/* 报告内容 */}
         <div className="flex-1 overflow-y-auto p-6">
-          <div id="automorph-report" className="bg-white p-8" style={{ width: '1123px', height: '794px' }}>
+          <div id="automorph-report" className="bg-white p-8 pdf-optimized" style={{ width: '1123px', minHeight: '794px' }}>
             {/* 报告标题 */}
-            <div className="text-center mb-6">
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">眼科Automorph检测报告</h1>
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-800 mb-2 report-title">眼科Automorph检测报告</h1>
               <p className="text-gray-600">报告日期：{reportData.reportDate}</p>
             </div>
 
             {/* 患者信息 */}
-            <section className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-3 border-b-2 border-blue-500 pb-2">
+            <section className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">
                 患者信息
               </h2>
-              <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="patient-info-grid text-sm">
                 <div>
                   <span className="font-medium text-gray-700">患者姓名：</span>
                   <span className="text-gray-800">{reportData.patientInfo.patentName}</span>
@@ -277,106 +282,106 @@ const AutomorphReport: React.FC = () => {
             {/* 分割图像结果 */}
             {reportData.automorphResult && (
               <section className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-3 border-b-2 border-blue-500 pb-2">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">
                   图像分割结果
                 </h2>
-                <div className="grid grid-cols-3 gap-3 mb-4">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6 image-grid">
                   {/* 原始图像 */}
-                  <div className="text-center">
-                    <div className="bg-gray-100 rounded-lg p-2 mb-2 h-32 flex items-center justify-center">
+                  <div className="text-center min-w-0 image-container">
+                    <div className="bg-gray-100 rounded-lg p-3 mb-3 h-40 flex items-center justify-center border border-gray-200 shadow-sm">
                       {reportData.automorphResult.origin ? (
                         <img
-                          src={reportData.automorphResult.origin.startsWith('data:') 
-                            ? reportData.automorphResult.origin 
+                          src={reportData.automorphResult.origin.startsWith('data:')
+                            ? reportData.automorphResult.origin
                             : `data:image/png;base64,${reportData.automorphResult.origin}`}
                           alt="原始图像"
-                          className="max-w-full max-h-full object-contain"
+                          className="max-w-full max-h-full object-contain rounded"
                         />
                       ) : (
-                        <div className="text-gray-400 text-sm">原始图像</div>
+                        <div className="text-gray-400 text-sm font-medium">原始图像</div>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-gray-700">原始图像</p>
+                    <p className="text-sm font-semibold text-gray-700 truncate">原始图像</p>
                   </div>
 
                   {/* 动脉分割 */}
-                  <div className="text-center">
-                    <div className="bg-gray-100 rounded-lg p-2 mb-2 h-32 flex items-center justify-center">
+                  <div className="text-center min-w-0 image-container">
+                    <div className="bg-gray-100 rounded-lg p-3 mb-3 h-40 flex items-center justify-center border border-gray-200 shadow-sm">
                       {reportData.automorphResult.segmentation.artery_binary_process ? (
                         <img
                           src={`data:image/png;base64,${reportData.automorphResult.segmentation.artery_binary_process}`}
                           alt="动脉分割"
-                          className="max-w-full max-h-full object-contain"
+                          className="max-w-full max-h-full object-contain rounded"
                         />
                       ) : (
-                        <div className="text-gray-400 text-sm">动脉分割</div>
+                        <div className="text-gray-400 text-sm font-medium">动脉分割</div>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-gray-700">动脉分割</p>
+                    <p className="text-sm font-semibold text-gray-700 truncate">动脉分割</p>
                   </div>
 
                   {/* 静脉分割 */}
-                  <div className="text-center">
-                    <div className="bg-gray-100 rounded-lg p-2 mb-2 h-32 flex items-center justify-center">
+                  <div className="text-center min-w-0 image-container">
+                    <div className="bg-gray-100 rounded-lg p-3 mb-3 h-40 flex items-center justify-center border border-gray-200 shadow-sm">
                       {reportData.automorphResult.segmentation.vein_binary_process ? (
                         <img
                           src={`data:image/png;base64,${reportData.automorphResult.segmentation.vein_binary_process}`}
                           alt="静脉分割"
-                          className="max-w-full max-h-full object-contain"
+                          className="max-w-full max-h-full object-contain rounded"
                         />
                       ) : (
-                        <div className="text-gray-400 text-sm">静脉分割</div>
+                        <div className="text-gray-400 text-sm font-medium">静脉分割</div>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-gray-700">静脉分割</p>
+                    <p className="text-sm font-semibold text-gray-700 truncate">静脉分割</p>
                   </div>
 
                   {/* 血管分割 */}
-                  <div className="text-center">
-                    <div className="bg-gray-100 rounded-lg p-2 mb-2 h-32 flex items-center justify-center">
+                  <div className="text-center min-w-0 image-container">
+                    <div className="bg-gray-100 rounded-lg p-3 mb-3 h-40 flex items-center justify-center border border-gray-200 shadow-sm">
                       {reportData.automorphResult.segmentation.binary_process ? (
                         <img
                           src={`data:image/png;base64,${reportData.automorphResult.segmentation.binary_process}`}
                           alt="血管分割"
-                          className="max-w-full max-h-full object-contain"
+                          className="max-w-full max-h-full object-contain rounded"
                         />
                       ) : (
-                        <div className="text-gray-400 text-sm">血管分割</div>
+                        <div className="text-gray-400 text-sm font-medium">血管分割</div>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-gray-700">血管分割</p>
+                    <p className="text-sm font-semibold text-gray-700 truncate">血管分割</p>
                   </div>
 
                   {/* 视盘分割 */}
-                  <div className="text-center">
-                    <div className="bg-gray-100 rounded-lg p-2 mb-2 h-32 flex items-center justify-center">
+                  <div className="text-center min-w-0 image-container">
+                    <div className="bg-gray-100 rounded-lg p-3 mb-3 h-40 flex items-center justify-center border border-gray-200 shadow-sm">
                       {reportData.automorphResult.segmentation.optic_disc_cup ? (
                         <img
                           src={`data:image/png;base64,${reportData.automorphResult.segmentation.optic_disc_cup}`}
                           alt="视盘分割"
-                          className="max-w-full max-h-full object-contain"
+                          className="max-w-full max-h-full object-contain rounded"
                         />
                       ) : (
-                        <div className="text-gray-400 text-sm">视盘分割</div>
+                        <div className="text-gray-400 text-sm font-medium">视盘分割</div>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-gray-700">视盘分割</p>
+                    <p className="text-sm font-semibold text-gray-700 truncate">视盘分割</p>
                   </div>
 
                   {/* 动静脉合并 */}
-                  <div className="text-center">
-                    <div className="bg-gray-100 rounded-lg p-2 mb-2 h-32 flex items-center justify-center">
+                  <div className="text-center min-w-0 image-container">
+                    <div className="bg-gray-100 rounded-lg p-3 mb-3 h-40 flex items-center justify-center border border-gray-200 shadow-sm">
                       {reportData.automorphResult.segmentation.artery_vein ? (
                         <img
                           src={`data:image/png;base64,${reportData.automorphResult.segmentation.artery_vein}`}
                           alt="动静脉合并"
-                          className="max-w-full max-h-full object-contain"
+                          className="max-w-full max-h-full object-contain rounded"
                         />
                       ) : (
-                        <div className="text-gray-400 text-sm">动静脉合并</div>
+                        <div className="text-gray-400 text-sm font-medium">动静脉合并</div>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-gray-700">动静脉合并</p>
+                    <p className="text-sm font-semibold text-gray-700 truncate">动静脉合并</p>
                   </div>
                 </div>
               </section>
@@ -384,15 +389,15 @@ const AutomorphReport: React.FC = () => {
 
             {/* 量化指标 */}
             {reportData.automorphResult && Object.keys(reportData.automorphResult.quantitative).length > 0 && (
-              <section className="mb-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-3 border-b-2 border-blue-500 pb-2">
+              <section className="mb-8">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">
                   量化指标
                 </h2>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="quantitative-metrics text-sm">
                   {Object.entries(reportData.automorphResult.quantitative).map(([key, value]) => (
-                    <div key={key} className="flex justify-between bg-gray-50 p-2 rounded">
-                      <span className="font-medium text-gray-700">{key}：</span>
-                      <span className="text-gray-800">
+                    <div key={key} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200 metric-item">
+                      <span className="font-medium text-gray-700 truncate mr-2">{key}：</span>
+                      <span className="text-gray-800 font-mono flex-shrink-0">
                         {typeof value === 'number' ? value.toFixed(3) : value}
                       </span>
                     </div>
@@ -402,8 +407,8 @@ const AutomorphReport: React.FC = () => {
             )}
 
             {/* 医生信息 */}
-            <section className="mt-8 pt-4 border-t border-gray-200">
-              <div className="flex justify-between text-sm text-gray-600">
+            <section className="mt-8 pt-4 border-t border-gray-200 signature-section">
+              <div className="flex justify-between text-sm text-gray-600 signature-info">
                 <div>
                   <span className="font-medium">检查医生：</span>
                   <span>{reportData.doctorInfo.name}</span>

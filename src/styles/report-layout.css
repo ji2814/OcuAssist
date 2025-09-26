@@ -1,0 +1,238 @@
+/* 报告布局优化样式 */
+
+/* 防止元素重叠的通用样式 */
+.report-container {
+  container-type: inline-size;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* 报告标题样式优化 */
+.report-title {
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  word-break: break-word;
+}
+
+/* 患者信息网格布局优化 */
+.patient-info-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+@container (max-width: 640px) {
+  .patient-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 图像容器样式优化 */
+.image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.image-container:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 0.25rem;
+}
+
+/* 量化指标网格布局 */
+.quantitative-metrics {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+@container (max-width: 768px) {
+  .quantitative-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 诊断结果卡片样式 */
+.diagnosis-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.diagnosis-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.diagnosis-card .card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.diagnosis-card .card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.diagnosis-card .content-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .diagnosis-card .content-row {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.diagnosis-card .content-label {
+  font-weight: 500;
+  color: #374151;
+  flex-shrink: 0;
+  min-width: 4rem;
+}
+
+.diagnosis-card .content-value {
+  color: #1f2937;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* 文本区域样式优化 */
+.textarea-field {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  resize: vertical;
+  transition: all 0.2s ease-in-out;
+}
+
+.textarea-field:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.textarea-field::placeholder {
+  color: #9ca3af;
+}
+
+/* 文本显示区域样式 */
+.text-display {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  min-height: 6rem;
+  line-height: 1.6;
+  color: #1f2937;
+  word-break: break-word;
+}
+
+/* 医生签名区域样式 */
+.signature-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.signature-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.signature-block {
+  text-align: center;
+}
+
+.signature-line {
+  border-bottom: 2px solid #9ca3af;
+  width: 8rem;
+  margin-bottom: 0.5rem;
+}
+
+/* PDF生成优化样式 */
+.pdf-optimized {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "STHeiti", "WenQuanYi Micro Hei", sans-serif;
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+/* 防止表格和列表重叠 */
+table, ul, ol {
+  margin-bottom: 1rem;
+}
+
+table:last-child, ul:last-child, ol:last-child {
+  margin-bottom: 0;
+}
+
+/* 响应式字体大小 */
+@container (max-width: 480px) {
+  .report-container {
+    font-size: 0.875rem;
+  }
+  
+  .report-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* 打印样式优化 */
+@media print {
+  .report-container {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+  
+  .report-title {
+    font-size: 18pt;
+    margin-bottom: 1rem;
+  }
+  
+  .image-container {
+    break-inside: avoid;
+  }
+  
+  .diagnosis-card {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+  
+  .signature-section {
+    break-inside: avoid;
+    margin-top: 2rem;
+  }
+}

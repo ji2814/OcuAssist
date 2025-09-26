@@ -1,7 +1,6 @@
 import React from 'react';
 import { useRecognition } from '../../context/Recognition';
 import { ModalType } from '../../types/FundImageType';
-import { AutomorphResult } from '../../types/RecognitionType';
 import clsx from 'clsx';
 import { FaImage, FaChartLine } from 'react-icons/fa';
 
