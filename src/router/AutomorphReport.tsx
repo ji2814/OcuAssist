@@ -393,15 +393,25 @@ const AutomorphReport: React.FC = () => {
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-500 pb-2">
                   量化指标
                 </h2>
-                <div className="quantitative-metrics text-sm">
-                  {Object.entries(reportData.automorphResult.quantitative).map(([key, value]) => (
-                    <div key={key} className="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200 metric-item">
-                      <span className="font-medium text-gray-700 truncate mr-2">{key}：</span>
-                      <span className="text-gray-800 font-mono flex-shrink-0">
-                        {typeof value === 'number' ? value.toFixed(3) : value}
-                      </span>
-                    </div>
-                  ))}
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse border border-gray-300 text-sm">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-700">指标</th>
+                        <th className="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-700">数值</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(reportData.automorphResult.quantitative).map(([key, value]) => (
+                        <tr key={key} className="hover:bg-gray-50">
+                          <td className="border border-gray-300 px-4 py-2 font-medium text-gray-700">{key}</td>
+                          <td className="border border-gray-300 px-4 py-2 text-gray-800 font-mono">
+                            {typeof value === 'number' ? value.toFixed(3) : value}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </section>
             )}

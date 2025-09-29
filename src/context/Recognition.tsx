@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
-import { RecognitionRequest, RecognitionResult, AutomorphResult } from '../types/RecognitionType';
+import { RecognitionRequest, RecognitionResult, AutomorphResult, OCTSegResult } from '../types/RecognitionType';
 import { ModalType } from '../types/FundImageType';
 import { fetch } from '@tauri-apps/plugin-http';
 import { url2base64 } from '../utils/url2base64';
@@ -18,6 +18,10 @@ interface RecognitionContextType {
     FFA: AutomorphResult | null;
     CFP: AutomorphResult | null;
   };
+  // OCTSeg分割结果
+  octSegResults: {
+    OCT: OCTSegResult | null;
+  };
   // 加载状态
   isLoading: {
     OCT: boolean;
@@ -32,10 +36,14 @@ interface RecognitionContextType {
   };
   // 执行automorph
   performAutomorph: (request: RecognitionRequest, modalType: ModalType) => Promise<void>;
+  // 执行OCTSeg分割
+  performOCTSeg: (request: RecognitionRequest) => Promise<void>;
   // 清除识别结果
   clearRecognition: (modalType: ModalType) => void;
   // 清除automorph结果
   clearAutomorph: (modalType: ModalType) => void;
+  // 清除OCTSeg结果
+  clearOCTSeg: () => void;
   // 清除所有结果
   clearAllResults: () => void;
 }
@@ -65,6 +73,13 @@ export const RecognitionProvider: React.FC<{ children: ReactNode }> = ({ childre
     OCT: null,
     FFA: null,
     CFP: null
+  });
+
+  // OCTSeg分割结果
+  const [octSegResults, setOctSegResults] = useState<{
+    OCT: OCTSegResult | null;
+  }>({
+    OCT: null
   });
 
   // 加载状态
@@ -140,7 +155,6 @@ export const RecognitionProvider: React.FC<{ children: ReactNode }> = ({ childre
       
       // 将图像URL转换为base64
       const base64Data = await url2base64(request.image);
-      console.log(`Base64转换完成，长度:`, base64Data.length);
       
       // 调用API
       const result = await apiCall(`http://localhost:5000/api/automorph`, {
@@ -161,6 +175,45 @@ export const RecognitionProvider: React.FC<{ children: ReactNode }> = ({ childre
       setErrors(prev => ({
         ...prev,
         [modalType]: error instanceof Error ? error.message : 'Automorph失败，请重试'
+      }));
+    } finally {
+      // 清除加载状态
+      setIsLoading(prev => ({ ...prev, [modalType]: false }));
+    }
+  }, []);
+
+  // 执行OCTSeg分割
+  const performOCTSeg = useCallback(async (request: RecognitionRequest) => {
+    const modalType = 'OCT';
+    
+    // 设置加载状态
+    setIsLoading(prev => ({ ...prev, [modalType]: true }));
+    setErrors(prev => ({ ...prev, [modalType]: null }));
+
+    try {
+      console.log(`开始处理OCTSeg分割:`, request.image);
+      
+      // 将图像URL转换为base64
+      const base64Data = await url2base64(request.image);
+      
+      // 调用API
+      const result = await apiCall(`http://localhost:5000/api/octseg`, {
+        image: request.image,
+        base64: base64Data
+      });
+
+      console.log(`OCTSeg分割完成:`, result);
+
+      // 更新OCTSeg结果
+      setOctSegResults({
+        OCT: result
+      });
+    } catch (error) {
+      console.error(`OCTSeg分割失败:`, error);
+      // 设置错误状态
+      setErrors(prev => ({
+        ...prev,
+        [modalType]: error instanceof Error ? error.message : 'OCTSeg分割失败，请重试'
       }));
     } finally {
       // 清除加载状态
@@ -192,6 +245,17 @@ export const RecognitionProvider: React.FC<{ children: ReactNode }> = ({ childre
     }));
   }, []);
 
+  // 清除OCTSeg结果
+  const clearOCTSeg = useCallback(() => {
+    setOctSegResults({
+      OCT: null
+    });
+    setErrors(prev => ({
+      ...prev,
+      OCT: null
+    }));
+  }, []);
+
   // 清除所有结果
   const clearAllResults = useCallback(() => {
     setRecognitionResults({
@@ -204,6 +268,9 @@ export const RecognitionProvider: React.FC<{ children: ReactNode }> = ({ childre
       FFA: null,
       CFP: null
     });
+    setOctSegResults({
+      OCT: null
+    });
     setErrors({
       OCT: null,
       FFA: null,
@@ -214,11 +281,14 @@ export const RecognitionProvider: React.FC<{ children: ReactNode }> = ({ childre
   const contextValue: RecognitionContextType = {
     recognitionResults,
     automorphResults,
+    octSegResults,
     isLoading,
     errors,
     performAutomorph,
+    performOCTSeg,
     clearRecognition,
     clearAutomorph,
+    clearOCTSeg,
     clearAllResults
   };
 

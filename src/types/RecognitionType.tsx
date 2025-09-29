@@ -27,14 +27,12 @@ export interface AutomorphResult {
     status: 'pending' | 'success' | 'error',
 }
 
-export interface OCTRecognitionResult extends RecognitionResult {
-    // TODO: 定义OCT识别结果的接口
-}
-
-export interface FFARecognitionResult extends RecognitionResult {
-    // TODO: 定义FFA识别结果的接口
-}
-
-export interface CFPRecognitionResult extends RecognitionResult {
-    // TODO: 定义CFP识别结果的接口
+export interface OCTSegResult {
+    origin: string,
+    segmentation: {
+        OCTSeg: string,  // OCT积液分割结果（base64）
+    },
+    quantitative: {},
+    timestamp: Date,
+    status: 'pending' | 'success' | 'error',
 }
